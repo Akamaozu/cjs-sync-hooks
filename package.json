@@ -4,11 +4,17 @@
   "description": "Write modular libs and apps by creating hooks where others can insert new behavior or modify data",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc node_modules/mocha/bin/_mocha",
+    "lcov-to-coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "akamaozu <uzo@designbymobius.ca>",
   "license": "MIT",
   "dependencies": {
     "lodash.foreach": "^4.5.0"
+  },
+  "devDependencies": {
+    "coveralls": "^3.0.0",
+    "mocha": "^4.0.1",
+    "nyc": "^11.4.1"
   }
 }
