@@ -1,0 +1,14 @@
+{
+  "name": "cjs-sync-hooks",
+  "version": "0.1.0",
+  "description": "Write modular libs and apps by creating hooks where others can insert new behavior or modify data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "akamaozu <uzo@designbymobius.ca>",
+  "license": "MIT",
+  "dependencies": {
+    "lodash.foreach": "^4.5.0"
+  }
+}
