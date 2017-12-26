@@ -14,12 +14,15 @@ Make Your Code Extendable By Creating Hooks for Modifying Behavior and Values
     var hook = require( 'cjs-sync-hooks' )();
 
 ### Add Middleware
+
+    ```js
     hook.add( 'output', 'prepend-subsystem-name', function( output ){
       var subsystem = 'heroku-formatting-12345',
           prefix = '['+ subsystem + '] ';
 
       return prefix + output; 
     });
+    ```
 
 ### Run Hook Stack
     var output = hook.run( 'output', 'hello world!' );
