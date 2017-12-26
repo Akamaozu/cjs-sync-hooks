@@ -6,18 +6,19 @@ Make Your Code Extendable By Creating Hooks for Modifying Behavior and Values
 [![Coverage Status](https://coveralls.io/repos/github/Akamaozu/cjs-sync-hooks/badge.svg?branch=master)](https://coveralls.io/github/Akamaozu/cjs-sync-hooks?branch=master)
 
 ## Install
-    npm install --save cjs-sync-hooks
+```js
+npm install --save cjs-sync-hooks
+```
 
 ## Basic Usage
 
 ### Create a Hook Instance
 
-
-var hook = require( 'cjs-sync-hooks' )();
-
 ```js
-### Add Middleware
+var hook = require( 'cjs-sync-hooks' )();
 ```
+
+### Add Middleware
 
 ```js
 hook.add( 'output', 'prepend-subsystem-name', function( output ){
