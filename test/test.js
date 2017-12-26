@@ -7,7 +7,7 @@ describe( 'About Main Export', function(){
   });
 });
 
-describe( 'Instantiated Hooks Properties', function(){
+describe( 'Hook Instance Properties', function(){
   var hook = hooks(),
       expected_props = [
         { name: 'add', type: 'function' },
@@ -49,5 +49,111 @@ describe( 'Instantiated Hooks Properties', function(){
         assert.equal( expected_prop_names.indexOf( prop_name ) > -1, true, 'hook instance has unexpected property "' + prop_name + '"' );
       });
     }
+  });
+
+  describe( 'hook.del', function(){    
+    it( 'is an alias for hook.delete', function(){
+      assert.equal( hook.del === hook.delete, true, 'hook.del is not strictly equal to hook.delete' );
+    });
+  });
+});
+
+describe( 'Hook Instance Function Behavior', function(){
+  var datatypes = [
+    { name: 'function', example: function(){} },
+    { name: 'string', example: 'hello world' },
+    { name: 'object', example: {} },
+    { name: 'null', example: null },
+    { name: 'number', example: 1 },
+    { name: 'array', example: [] }
+  ];
+
+  describe( 'hook.add', function(){
+    it( 'requires three arguments: string string function', function(){
+      var hook = hooks(),
+          didnt_throw_error = [];
+
+      datatypes.forEach( function( first ){
+        datatypes.forEach( function( second ){
+          datatypes.forEach( function( third ){
+            try{
+              hook.add( first.example, second.example, third.example );
+              didnt_throw_error.push([ first, second, third ]);
+            }
+            catch(e){}
+          });
+        });
+      });
+
+      assert.equal( didnt_throw_error.length > 0, true, 'could not find a combination of three arguments to successfully run add' );
+
+      didnt_throw_error.forEach( function( fn_signature ){
+        var first = fn_signature[0],
+            second = fn_signature[1],
+            third = fn_signature[2];
+
+        assert.equal( first.name, 'string', 'function ran when first argument was a ' + first.name );
+        assert.equal( second.name, 'string', 'function ran when second argument was a ' + second.name );
+        assert.equal( third.name, 'function', 'function ran when third argument was a ' + third.name );
+      });
+    });
+
+    it( 'adds middleware (function argument) to be executed when associated hook (first string argument) is run', function(){
+      var hook = hooks(),
+          hook_name = 'test',
+          ran = false;
+
+      hook.add( hook_name, 'modify-ran-flag', function(){
+        ran = true;
+      });
+
+      hook.run( hook_name );
+      assert.equal( ran, true, 'function was not executed when hook ran' );
+    });
+  });
+
+  describe( 'hook.del', function(){
+    it( 'requires two arguments: string string', function(){
+      var hook = hooks(),
+          didnt_throw_error = [];
+
+      datatypes.forEach( function( first ){
+        datatypes.forEach( function( second ){
+          try{
+            hook.del( first.example, second.example );
+            didnt_throw_error.push([ first, second ]);
+          }
+          catch(e){}
+        });
+      });
+
+      assert.equal( didnt_throw_error.length > 0, true, 'could not find a combination of two arguments to successfully run del/delete' );
+
+      didnt_throw_error.forEach( function( fn_signature ){
+        var first = fn_signature[0],
+            second = fn_signature[1];
+
+        assert.equal( first.name, 'string', 'function ran when first argument was a ' + first.name );
+        assert.equal( second.name, 'string', 'function ran when second argument was a ' + second.name );
+      });
+    });
+
+    it( 'removes middleware (second string argument) from hook (first string argument) execution stack', function(){
+      var hook = hooks(),
+          hook_name = 'test',
+          middleware_name = 'incrementer',
+          executed = 0;
+
+      hook.add( hook_name, middleware_name, function(){
+        executed += 1;
+      });
+
+      hook.run( hook_name );
+      assert.equal( executed === 1, true, 'added middleware did not run when expected' );
+
+      hook.del( hook_name, middleware_name );
+      hook.run( hook_name );
+      assert.equal( executed != 2, true, 'added middleware ran after it was supposed to be deleted' );
+    });
   });
 });
