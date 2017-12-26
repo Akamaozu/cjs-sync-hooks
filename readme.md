@@ -11,9 +11,13 @@ Make Your Code Extendable By Creating Hooks for Modifying Behavior and Values
 ## Basic Usage
 
 ### Create a Hook Instance
-    var hook = require( 'cjs-sync-hooks' )();
 
+
+var hook = require( 'cjs-sync-hooks' )();
+
+```js
 ### Add Middleware
+```
 
 ```js
 hook.add( 'output', 'prepend-subsystem-name', function( output ){
@@ -25,53 +29,62 @@ hook.add( 'output', 'prepend-subsystem-name', function( output ){
 ```
 
 ### Run Hook Stack
-    var output = hook.run( 'output', 'hello world!' );
 
-    console.log( output ); 
-    // [heroku-formatting-12345] hello world!
+```js
+var output = hook.run( 'output', 'hello world!' );
+
+console.log( output ); 
+// [heroku-formatting-12345] hello world!
+```
 
 ## Advanced Usage
 
 ### Prematurely Stop Running Hook Stack
 #### Useful for Pattern-Matching: exit stack when compatible middleware is found.
-    hook.add( 'stdin', 'handle-string', function( input ){
-      if( typeof input !== 'string' ) return;
 
-      // do something with string then
-      hook.end();
-    });
+```js
+hook.add( 'stdin', 'handle-string', function( input ){
+  if( typeof input !== 'string' ) return;
 
-    hook.add( 'stdin', 'handle-number', function( input ){
-      if( typeof input !== 'number' ) return;
+  // do something with string then
+  hook.end();
+});
 
-      // do something with number then
-      hook.end();
-    });
+hook.add( 'stdin', 'handle-number', function( input ){
+  if( typeof input !== 'number' ) return;
 
-    process.on( 'data', function( data ){
-      hook.run( 'stdin', data );
-    });
+  // do something with number then
+  hook.end();
+});
+
+process.on( 'data', function( data ){
+  hook.run( 'stdin', data );
+});
+```
 
 ### Nested Hooks
-    var message = {
-      to: 'timmy',
-      from: 'tommy',
-      content: 'you should check *this* out https://youtu.be/dQw4w9WgXcQ'
-    };
 
-    hook.add( 'message-to-send', 'markdown-to-html', function( message ){
-      var pre_markdown_expanded_message = hook.run( 'pre-markdown-to-html', message );
+```js
+var message = {
+  to: 'timmy',
+  from: 'tommy',
+  content: 'you should check *this* out https://youtu.be/dQw4w9WgXcQ'
+};
 
-      // convert markdown to html
+hook.add( 'message-to-send', 'markdown-to-html', function( message ){
+  var pre_markdown_expanded_message = hook.run( 'pre-markdown-to-html', message );
 
-      return markdown_expanded_message;
-    });
+  // convert markdown to html
 
-    hook.add( 'pre-markdown-to-html', 'convert-url-to-markdown-link', function( message ){
+  return markdown_expanded_message;
+});
 
-      // replace urls with markdown links
+hook.add( 'pre-markdown-to-html', 'convert-url-to-markdown-link', function( message ){
 
-      return url_to_markdown_message;
-    });
+  // replace urls with markdown links
 
-    app.send( hook.run( 'message-to-send', message ) );
+  return url_to_markdown_message;
+});
+
+app.send( hook.run( 'message-to-send', message ) );
+```
