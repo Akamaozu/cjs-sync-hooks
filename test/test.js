@@ -110,6 +110,23 @@ describe( 'Hook Instance Function Behavior', function(){
       hook.run( hook_name );
       assert.equal( ran, true, 'function was not executed when hook ran' );
     });
+
+    it( 'throws error if hook already has a middleware with the name (second string argument) given', function(){
+      var hook = hooks(),
+          hook_name = 'test',
+          middleware_name = 'jj2',
+          failed = false;
+
+      hook.add( hook_name, middleware_name, function(){} );
+      try{
+        hook.add( hook_name, middleware_name, function(){} );
+      }
+      catch(e){
+        failed = true;
+      }
+
+      assert.equal( failed, true, 'attempt to add second middleware by the same name did not fail' );
+    });
   });
 
   describe( 'hook.del', function(){
