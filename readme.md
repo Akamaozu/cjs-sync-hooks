@@ -18,38 +18,40 @@ npm install --save cjs-sync-hooks
 var hook = require( 'cjs-sync-hooks' )();
 ```
 
-### Add Middleware
+### Add Middleware to a hook
 #### Middleware: function that executes whenever its associated hook is run. 
 
 ```js
-// add middleware 'prepend-subsystem-name' to output hook
-hook.add( 'output', 'prepend-subsystem-name', function( output ){
-  var subsystem = 'heroku-formatting-12345',
-      prefix = '['+ subsystem + '] ';
+// add 'prepend-subsystem-name' middleware to output hook
 
-  return prefix + output; 
-});
+  hook.add( 'output', 'prepend-subsystem-name', function( output ){
+    var subsystem = 'heroku-formatting-12345',
+        prefix = '['+ subsystem + '] ';
+
+    return prefix + output; 
+  });
 ```
 
 ### Run Hook Stack
 
 ```js
 // run "hello world!" through output hook
-var output = hook.run( 'output', 'hello world!' );
 
-console.log( output ); 
-// [heroku-formatting-12345] hello world!
+  var output = hook.run( 'output', 'hello world!' );
+
+  console.log( output ); 
+  // [heroku-formatting-12345] hello world!
 ```
 
 ## Advanced Usage
 
 ### Prematurely Stop Running Hook Stack
-#### In some cases you might not want to execute every middleware in a hook's stack.
-#### You can exit it trivially by using `hook.end`.
+#### In some cases you might not want to execute every middleware in a hook's stack. You can exit it by using `hook.end`.
 #### Useful for Pattern-Matching: exit stack when compatible middleware is found.
 
 ```js
 // add middleware to handle strings
+
   hook.add( 'stdin', 'handle-string', function( input ){
     if( typeof input !== 'string' ) return;
 
@@ -58,6 +60,7 @@ console.log( output );
   });
 
 // add middleware to handle numbers
+
   hook.add( 'stdin', 'handle-number', function( input ){
     if( typeof input !== 'number' ) return;
 
@@ -65,7 +68,8 @@ console.log( output );
     hook.end();
   });
 
-// run hook when process receives data
+// run data from stdin through hook
+
   process.on( 'data', function( data ){
     hook.run( 'stdin', data );
   });
@@ -75,23 +79,24 @@ console.log( output );
 #### I heard you like hooks so I made it possible to run hooks in middleware running while hooks are running
 ```js
 // add middleware that converts markdown to html
+
   hook.add( 'message-to-send', 'markdown-to-html', function( message ){
     var pre_markdown_expanded_message = hook.run( 'pre-markdown-to-html', message );
 
     // convert markdown to html
-
     return markdown_expanded_message;
   });
 
 // add middleware to hook that runs in middleware of another hook running
+
   hook.add( 'pre-markdown-to-html', 'convert-url-to-markdown-link', function( message ){
 
     // replace urls with markdown links
-
     return url_to_markdown_message;
   });
 
 // pass outbound messages through nested hooks
+
   app.send( hook.run( 'message-to-send', {
     to: 'timmy',
     from: 'tommy',
