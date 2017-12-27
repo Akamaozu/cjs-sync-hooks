@@ -2,6 +2,7 @@ CJS-SYNC-HOOKS
 ===
 Make Your Code Extendable By Creating Hooks for Modifying Behavior and Values
 ---
+[![npm version](https://badge.fury.io/js/cjs-sync-hooks.svg)](https://badge.fury.io/js/cjs-sync-hooks)
 [![Build Status](https://travis-ci.org/Akamaozu/cjs-sync-hooks.svg?branch=master)](https://travis-ci.org/Akamaozu/cjs-sync-hooks)
 [![Coverage Status](https://coveralls.io/repos/github/Akamaozu/cjs-sync-hooks/badge.svg?branch=master)](https://coveralls.io/github/Akamaozu/cjs-sync-hooks?branch=master)
 
