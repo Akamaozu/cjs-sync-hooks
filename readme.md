@@ -19,8 +19,8 @@ var hook = require( 'cjs-sync-hooks' )();
 ```
 
 ### Add Middleware to a Hook Stack
-#### Middleware: function that executes whenever its associated hook is run.
-#### Hook Stack: collection of hook middleware.
+**Middleware: function that executes whenever its associated hook is run.**
+**Hook Stack: collection of hook middleware.**
 
 ```js
 // add 'prepend-subsystem-name' middleware to output hook
