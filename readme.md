@@ -24,7 +24,6 @@ var hook = require( 'cjs-sync-hooks' )();
 
 ```js
 // add 'prepend-subsystem-name' middleware to output hook
-
   hook.add( 'output', 'prepend-subsystem-name', function( output ){
     var subsystem = 'heroku-formatting-12345',
         prefix = '['+ subsystem + '] ';
@@ -37,23 +36,21 @@ var hook = require( 'cjs-sync-hooks' )();
 
 ```js
 // run "hello world!" through output hook
-
   var output = hook.run( 'output', 'hello world!' );
 
   console.log( output ); 
-  // [heroku-formatting-12345] hello world!
+// [heroku-formatting-12345] hello world!
 ```
 
 ## Advanced Usage
 
 ### Prematurely Stop Running Hook Stack
-#### In some cases you might not want to execute every middleware in a hook's stack.
-#### You can exit it by using `hook.end`.
-##### Useful for Pattern-Matching: exit stack when compatible middleware is found.
+#### You can exit a running hook stack early using `hook.end`.
+#### Why?
+    - Pattern-Matching: exit stack when compatible middleware is found.
 
 ```js
 // add middleware to handle strings
-
   hook.add( 'stdin', 'handle-string', function( input ){
     if( typeof input !== 'string' ) return;
 
@@ -62,7 +59,6 @@ var hook = require( 'cjs-sync-hooks' )();
   });
 
 // add middleware to handle numbers
-
   hook.add( 'stdin', 'handle-number', function( input ){
     if( typeof input !== 'number' ) return;
 
@@ -71,7 +67,6 @@ var hook = require( 'cjs-sync-hooks' )();
   });
 
 // run data from stdin through hook
-
   process.on( 'data', function( data ){
     hook.run( 'stdin', data );
   });
@@ -81,7 +76,6 @@ var hook = require( 'cjs-sync-hooks' )();
 #### I heard you like hooks so I made it possible to run hooks in middleware running while hooks are running
 ```js
 // add middleware that converts markdown to html
-
   hook.add( 'message-to-send', 'markdown-to-html', function( message ){
     var pre_markdown_expanded_message = hook.run( 'pre-markdown-to-html', message );
 
@@ -90,7 +84,6 @@ var hook = require( 'cjs-sync-hooks' )();
   });
 
 // add middleware to hook that runs in middleware of another hook running
-
   hook.add( 'pre-markdown-to-html', 'convert-url-to-markdown-link', function( message ){
 
     // replace urls with markdown links
@@ -98,7 +91,6 @@ var hook = require( 'cjs-sync-hooks' )();
   });
 
 // pass outbound messages through nested hooks
-
   app.send( hook.run( 'message-to-send', {
     to: 'timmy',
     from: 'tommy',
