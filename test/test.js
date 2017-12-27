@@ -246,5 +246,19 @@ describe( 'Hook Instance Function Behavior', function(){
 
       assert.equal( last_return_value, expected_return_value, 'returned value is not what was expected' );
     });
+
+    it( 'returns the first additional argument if there is no middleware in hook\'s stack', function(){
+      var hook = hooks(),
+          first_additional_arg = 'hello tester',
+          second_additional_arg = 'hello testers';
+
+      // single additional arg test
+      var result = hook.run( 'test', first_additional_arg );
+      assert.equal( result, first_additional_arg, 'hook.run return value is not the same as additional arg' );
+
+      // multiple additional arg test
+      var result = hook.run( 'test', first_additional_arg, second_additional_arg );
+      assert.equal( result, first_additional_arg, 'hook.run return value is not the same as additional arg' );
+    });
   });
 });
