@@ -18,8 +18,9 @@ npm install --save cjs-sync-hooks
 var hook = require( 'cjs-sync-hooks' )();
 ```
 
-### Add Middleware to a hook
-#### Middleware: function that executes whenever its associated hook is run. 
+### Add Middleware to a Hook Stack
+#### Middleware: function that executes whenever its associated hook is run.
+#### Hook Stack: collection of hook middleware.
 
 ```js
 // add 'prepend-subsystem-name' middleware to output hook
@@ -46,8 +47,9 @@ var hook = require( 'cjs-sync-hooks' )();
 ## Advanced Usage
 
 ### Prematurely Stop Running Hook Stack
-#### In some cases you might not want to execute every middleware in a hook's stack. You can exit it by using `hook.end`.
-#### Useful for Pattern-Matching: exit stack when compatible middleware is found.
+#### In some cases you might not want to execute every middleware in a hook's stack.
+#### You can exit it by using `hook.end`.
+##### Useful for Pattern-Matching: exit stack when compatible middleware is found.
 
 ```js
 // add middleware to handle strings
