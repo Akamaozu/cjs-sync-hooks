@@ -48,7 +48,7 @@ var hook = require( 'cjs-sync-hooks' )();
 ### Prematurely Stop Running Hook Stack
 #### You can exit a running hook stack early using `hook.end`.
 #### Why?
-- Pattern-Matching: exit stack when compatible middleware is found.
+- **Pattern-Matching**: exit stack when compatible middleware is found.
 
 ```js
 // add middleware to handle strings
