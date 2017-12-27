@@ -174,4 +174,75 @@ describe( 'Hook Instance Function Behavior', function(){
       assert.equal( executed != 2, true, 'added middleware ran after it was supposed to be deleted' );
     });
   });
+
+  describe( 'hook.run', function(){
+    it( 'requires one function argument: string', function(){
+      var hook = hooks(),
+          didnt_throw_error = [];
+
+      datatypes.forEach( function( first ){
+        try{
+          hook.run( first.example );
+          didnt_throw_error.push([ first ]);
+        }
+        catch(e){}
+      });
+
+      assert.equal( didnt_throw_error.length > 0, true, 'could not find an argument datatype to successfully execute hook.run' );
+
+      didnt_throw_error.forEach( function( fn_signature ){
+        var first = fn_signature[0];
+
+        assert.equal( first.name, 'string', 'function ran when first argument was a ' + first.name );
+      });
+    });
+
+    it( 'executes middleware functions added to a hook', function(){
+      var hook = hooks(),
+          hook_name = 'test',
+          executed = false;
+
+      hook.add( hook_name, 'trigger-flag', function(){
+        executed = true;
+      });
+
+      hook.run( hook_name );
+
+      assert.equal( executed, true, 'middleware added to hook not executed' );
+    });
+
+    it( 'additional arguments (any after the first required string) are passed to middleware in its execution stack', function(){
+      var hook = hooks(),
+          first_additonal_arg = 'a',
+          second_additonal_arg = 'b',
+          third_additonal_arg = 'c',
+          received = [];
+
+      hook.add( 'test', 'test-arg-pass', function( first, second, third ){
+        received[0] = first;
+        received[1] = second;
+        received[2] = third;
+      });
+
+      hook.run( 'test', first_additonal_arg, second_additonal_arg, third_additonal_arg );
+
+      assert.equal( received[0], first_additonal_arg, 'first additional argument does not match what was passed' );
+      assert.equal( received[1], second_additonal_arg, 'second additional argument does not match what was passed' );
+      assert.equal( received[2], third_additonal_arg, 'third additional argument does not match what was passed' );
+    });
+
+    it( 'returns the return value of the last executed middleware', function(){
+      var hook = hooks(),
+          expected_return_value = 'last-return-value',
+          last_return_value;
+
+      hook.add( 'test', 'return-value', function(){
+        return expected_return_value;
+      });
+
+      last_return_value = hook.run( 'test' );
+
+      assert.equal( last_return_value, expected_return_value, 'returned value is not what was expected' );
+    });
+  });
 });
