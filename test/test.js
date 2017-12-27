@@ -65,7 +65,8 @@ describe( 'Hook Instance Function Behavior', function(){
     { name: 'object', example: {} },
     { name: 'null', example: null },
     { name: 'number', example: 1 },
-    { name: 'array', example: [] }
+    { name: 'array', example: [] },
+    { name: 'undefined' }
   ];
 
   describe( 'hook.add', function(){
