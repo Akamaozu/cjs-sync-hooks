@@ -213,22 +213,24 @@ describe( 'Hook Instance Function Behavior', function(){
 
     it( 'additional arguments (any after the first required string) are passed to middleware in its execution stack', function(){
       var hook = hooks(),
-          first_additonal_arg = 'a',
-          second_additonal_arg = 'b',
-          third_additonal_arg = 'c',
-          received = [];
+          first_additional_arg = 'a',
+          second_additional_arg = 'b',
+          third_additional_arg = 'c';
 
-      hook.add( 'test', 'test-arg-pass', function( first, second, third ){
-        received[0] = first;
-        received[1] = second;
-        received[2] = third;
+      hook.add( 'test', 'test-single-arg-pass', function( first ){
+        assert.equal( first, first_additional_arg, 'additional argument does not match what was passed' );
       });
 
-      hook.run( 'test', first_additonal_arg, second_additonal_arg, third_additonal_arg );
+      hook.run( 'test', first_additional_arg );
+      hook.delete( 'test', 'test-single-arg-pass' );
 
-      assert.equal( received[0], first_additonal_arg, 'first additional argument does not match what was passed' );
-      assert.equal( received[1], second_additonal_arg, 'second additional argument does not match what was passed' );
-      assert.equal( received[2], third_additonal_arg, 'third additional argument does not match what was passed' );
+      hook.add( 'test', 'test-multi-arg-pass', function( first, second, third ){
+        assert.equal( first, first_additional_arg, 'first additional argument does not match what was passed' );
+        assert.equal( second, second_additional_arg, 'second additional argument does not match what was passed' );
+        assert.equal( third, third_additional_arg, 'third additional argument does not match what was passed' );
+      });
+
+      hook.run( 'test', first_additional_arg, second_additional_arg, third_additional_arg );
     });
 
     it( 'returns the return value of the last executed middleware', function(){
