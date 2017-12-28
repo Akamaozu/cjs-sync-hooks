@@ -281,8 +281,6 @@ describe( 'Hook Stack Run Behavior', function(){
     result = null;
 
     // multiple additional args test
-    hook.add( 'test', 'do-nothing', function(){} );
-
     result = hook.run( 'test', first_additional_arg, second_additional_arg );
 
     assert.equal( result, first_additional_arg, 'result does not match input given. expected: "' + first_additional_arg + '" received: "' + result + '"' );
