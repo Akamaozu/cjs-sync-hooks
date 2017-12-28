@@ -210,55 +210,81 @@ describe( 'Hook Instance Function Behavior', function(){
 
       assert.equal( executed, true, 'middleware added to hook not executed' );
     });
+  });
+});
 
-    it( 'additional arguments (any after the first required string) are passed to middleware in its execution stack', function(){
-      var hook = hooks(),
-          first_additional_arg = 'a',
-          second_additional_arg = 'b',
-          third_additional_arg = 'c';
+describe( 'Hook Stack Run Behavior', function(){
+  it( 'additional arguments (any after the first required string) are passed to middleware in its execution stack', function(){
+    var hook = hooks(),
+        first_additional_arg = 'a',
+        second_additional_arg = 'b',
+        third_additional_arg = 'c';
 
-      hook.add( 'test', 'test-single-arg-pass', function( first ){
-        assert.equal( first, first_additional_arg, 'additional argument does not match what was passed' );
-      });
-
-      hook.run( 'test', first_additional_arg );
-      hook.delete( 'test', 'test-single-arg-pass' );
-
-      hook.add( 'test', 'test-multi-arg-pass', function( first, second, third ){
-        assert.equal( first, first_additional_arg, 'first additional argument does not match what was passed' );
-        assert.equal( second, second_additional_arg, 'second additional argument does not match what was passed' );
-        assert.equal( third, third_additional_arg, 'third additional argument does not match what was passed' );
-      });
-
-      hook.run( 'test', first_additional_arg, second_additional_arg, third_additional_arg );
+    hook.add( 'test', 'test-single-arg-pass', function( first ){
+      assert.equal( first, first_additional_arg, 'additional argument does not match what was passed' );
     });
 
-    it( 'returns the return value of the last executed middleware', function(){
-      var hook = hooks(),
-          expected_return_value = 'last-return-value',
-          last_return_value;
+    hook.run( 'test', first_additional_arg );
+    hook.delete( 'test', 'test-single-arg-pass' );
 
-      hook.add( 'test', 'return-value', function(){
-        return expected_return_value;
-      });
-
-      last_return_value = hook.run( 'test' );
-
-      assert.equal( last_return_value, expected_return_value, 'returned value is not what was expected' );
+    hook.add( 'test', 'test-multi-arg-pass', function( first, second, third ){
+      assert.equal( first, first_additional_arg, 'first additional argument does not match what was passed' );
+      assert.equal( second, second_additional_arg, 'second additional argument does not match what was passed' );
+      assert.equal( third, third_additional_arg, 'third additional argument does not match what was passed' );
     });
 
-    it( 'returns the first additional argument if there is no middleware in hook\'s stack', function(){
-      var hook = hooks(),
-          first_additional_arg = 'hello tester',
-          second_additional_arg = 'hello testers';
+    hook.run( 'test', first_additional_arg, second_additional_arg, third_additional_arg );
+  });
 
-      // single additional arg test
-      var result = hook.run( 'test', first_additional_arg );
-      assert.equal( result, first_additional_arg, 'hook.run return value is not the same as additional arg' );
+  it( 'returns the return value of the last executed middleware', function(){
+    var hook = hooks(),
+        expected_return_value = 'last-return-value',
+        last_return_value;
 
-      // multiple additional arg test
-      var result = hook.run( 'test', first_additional_arg, second_additional_arg );
-      assert.equal( result, first_additional_arg, 'hook.run return value is not the same as additional arg' );
+    hook.add( 'test', 'return-value', function(){
+      return expected_return_value;
     });
+
+    last_return_value = hook.run( 'test' );
+
+    assert.equal( last_return_value, expected_return_value, 'returned value is not what was expected' );
+  });
+
+  it( 'returns the first additional argument if there is no middleware in hook\'s stack', function(){
+    var hook = hooks(),
+        first_additional_arg = 'hello tester',
+        second_additional_arg = 'hello testers';
+
+    // single additional arg test
+    var result = hook.run( 'test', first_additional_arg );
+    assert.equal( result, first_additional_arg, 'hook.run return value is not the same as additional arg' );
+
+    // multiple additional arg test
+    var result = hook.run( 'test', first_additional_arg, second_additional_arg );
+    assert.equal( result, first_additional_arg, 'hook.run return value is not the same as additional arg' );
+  });
+
+  it( 'will return first additional argument if no middleware returns any value', function(){
+    var hook = hooks(),
+        first_additional_arg = 'first',
+        second_additional_arg = 'second',
+        result;
+
+    // single additional arg test
+    hook.add( 'test', 'do-nothing', function(){} );
+
+    result = hook.run( 'test', first_additional_arg );
+
+    assert.equal( result, first_additional_arg, 'result does not match input given. expected: "' + first_additional_arg + '" received: "' + result + '"' );
+
+    // cleanup
+    result = null;
+
+    // multiple additional args test
+    hook.add( 'test', 'do-nothing', function(){} );
+
+    result = hook.run( 'test', first_additional_arg, second_additional_arg );
+
+    assert.equal( result, first_additional_arg, 'result does not match input given. expected: "' + first_additional_arg + '" received: "' + result + '"' );
   });
 });
