@@ -21,6 +21,7 @@ module.exports = function create_instance(){
     
     var input = Array.prototype.splice.call( arguments, 1, arguments.length - 1 ),
         multiple_user_args = input.length > 1,
+        output_set = false,
         output;
 
     if( !multiple_user_args ){
@@ -42,6 +43,8 @@ module.exports = function create_instance(){
       if( has_result ){        
         if( multiple_user_args ) input[0] = result;
         else input = result;
+
+        output_set = true;
       }
 
       output = result;
@@ -55,6 +58,9 @@ module.exports = function create_instance(){
     end.run = false;
     end.val = null;
     running -= 1;
+
+    // if no middleware returned a value, use the first additional run arg passed
+    if( !output_set ) output = multiple_user_args ? input[0] : input;
 
     return output;
   }
