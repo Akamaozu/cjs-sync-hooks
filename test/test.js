@@ -286,3 +286,27 @@ describe( 'Hook Stack Run Behavior', function(){
     assert.equal( result, first_additional_arg, 'result does not match input given. expected: "' + first_additional_arg + '" received: "' + result + '"' );
   });
 });
+
+describe( 'Hook Stack End Behavior', function(){
+
+  it( 'returns the output of the last executed middleware if no end value is specified', function(){
+    var hook = hooks(),
+        initial_value = 5,
+        expected_return_value = square_integer( initial_value );
+
+    hook.add( 'test', 'square-integer', square_integer );
+
+    hook.add( 'test', 'prematurely-end-stack', function(){
+      hook.end();
+    });
+
+    var return_value = hook.run( 'test', initial_value );
+
+    assert.equal( return_value, expected_return_value, 'returned value ('+ return_value +') is not what was expected ('+ expected_return_value +')' );
+
+    function square_integer( integer ){
+      if( typeof integer != 'number' || integer % 1 != 0 ) throw new Error( 'input ('+ integer +') is not an integer' );
+      return integer * integer;
+    }
+  });
+});
