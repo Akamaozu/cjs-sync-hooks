@@ -18,7 +18,7 @@ module.exports = function create_instance(){
 
   function run_stack( name ){
     if( typeof name !== 'string' || !name ) throw new Error( 'name of hook to run must be a string' );
-    
+
     var input = Array.prototype.splice.call( arguments, 1, arguments.length - 1 ),
         multiple_user_args = input.length > 1,
         output_set = false,
@@ -40,7 +40,7 @@ module.exports = function create_instance(){
       var result = multiple_user_args ? middleware.apply( null, input ) : middleware( input ),
           has_result = Object.prototype.toString.call( result ) !== '[object Undefined]';
 
-      if( has_result ){        
+      if( has_result ){
         if( multiple_user_args ) input[0] = result;
         else input = result;
 
