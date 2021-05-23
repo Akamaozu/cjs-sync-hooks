@@ -47,7 +47,7 @@ module.exports = function create_instance(){
   }
 
   function end_stack_run( final_value ){
-    if( running.length === 0 ) return;
+    if( running.length === 0 ) throw new Error( 'no hook is currently running' );
 
     end.run = true;
     if( Object.prototype.toString.call( final_value ) != '[object Undefined]' ) end.val = final_value;
