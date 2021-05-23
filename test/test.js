@@ -211,6 +211,46 @@ describe( 'Hook Instance Function Behavior', function(){
       assert.equal( executed, true, 'middleware added to hook not executed' );
     });
   });
+
+  describe( 'hook.end', function(){
+    it( 'ends the execution of a currently-running hook', function(){
+      var hook = hooks(),
+          steps_executed = 0,
+          expected_executions = 2;
+
+       hook.add( 'test', 'first-increment', increment_executed_steps );
+       hook.add( 'test', 'second-increment', increment_executed_steps );
+
+       hook.add( 'test', 'end', function(){
+         hook.end();
+       });
+
+       hook.add( 'test', 'third-increment', increment_executed_steps );
+
+       hook.run( 'test' );
+
+       assert.equal( steps_executed, expected_executions, 'executions expected ('+ expected_executions +'), observed executions ('+ steps_executed + ')' );
+
+       function increment_executed_steps(){
+         steps_executed += 1;
+       }
+    });
+
+    it( 'throws error if no hook is running', function(){
+      var hook = hooks(),
+          error_thrown = false;
+
+      try {
+        hook.end();
+      }
+
+      catch( error ){
+        error_thrown = true;
+      }
+
+      assert.equal( error_thrown, true, 'expected error to br thrown, but none was' );
+    });
+  });
 });
 
 describe( 'Hook Stack Run Behavior', function(){
