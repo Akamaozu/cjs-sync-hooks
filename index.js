@@ -4,10 +4,7 @@ module.exports = function create_instance(){
   var map = {},
       api = {},
       running = 0,
-      end = {
-        val: null,
-        run: false
-      };
+      end = { run: false };
 
   api.run = run_stack;
   api.end = end_stack_run;
@@ -16,60 +13,44 @@ module.exports = function create_instance(){
 
   return api;
 
-  function run_stack( name ){
-    if( typeof name !== 'string' || !name ) throw new Error( 'name of hook to run must be a string' );
+  function run_stack( hook_name, main_input ){
+    if( ! hook_name || typeof hook_name !== 'string' ) throw new Error( 'name of hook is required and must be a string' );
+    if( ! map[ hook_name ] ) return main_input;
 
-    var input = Array.prototype.splice.call( arguments, 1, arguments.length - 1 ),
-        multiple_user_args = input.length > 1,
-        output_set = false,
-        output;
+    var hook_middlewares = map[ hook_name ],
+        supplementary_inputs = arguments.length > 2 ? Array.prototype.splice.call( arguments, 2, arguments.length - 1 ) : [],
+        middleware_args = [ main_input ].concat( supplementary_inputs ),
+        stack_output = main_input;
 
-    if( !multiple_user_args ){
-      if( input.length == 1 ) input = input[0];
-      else input = undefined;
-    }
-
-    if( !map[ name ] ) return multiple_user_args ? input[0] : input;
-
-    var hook_stack = map[ name ];
     running += 1;
 
-    each( hook_stack, function( middleware, name ){
-      if( typeof middleware !== 'function' ) return;
+    each( hook_middlewares, function( middleware ){
+      var result = middleware.apply( null, middleware_args );
+      if( end.run ) return false;
 
-      var result = multiple_user_args ? middleware.apply( null, input ) : middleware( input ),
-          has_result = Object.prototype.toString.call( result ) !== '[object Undefined]';
-
+      var has_result = Object.prototype.toString.call( result ) !== '[object Undefined]';
       if( has_result ){
-        if( multiple_user_args ) input[0] = result;
-        else input = result;
-
-        output_set = true;
-      }
-
-      output = result;
-
-      if( end.run ){
-        output = end.val;
-        return false;
+        stack_output = result;
+        middleware_args = [ stack_output ].concat( supplementary_inputs );
       }
     });
 
-    end.run = false;
-    end.val = null;
+    if( end.run ){
+      if( Object.prototype.toString.call( end.val ) != '[object Undefined]' ) stack_output = end.val;
+      delete end.val;
+      end.run = false;
+    }
+
     running -= 1;
 
-    // if no middleware returned a value, use the first additional run arg passed
-    if( !output_set ) output = multiple_user_args ? input[0] : input;
-
-    return output;
+    return stack_output;
   }
 
   function end_stack_run( final_value ){
-    if( !running ) return;
+    if( running === 0 ) return;
 
     end.run = true;
-    end.val = final_value;
+    if( Object.prototype.toString.call( final_value ) != '[object Undefined]' ) end.val = final_value;
   }
 
   function delete_middleware( hook, name ){
