@@ -3,7 +3,7 @@ var each = require( 'lodash.foreach' );
 module.exports = function create_instance(){
   var map = {},
       api = {},
-      running = 0,
+      running = [],
       end = { run: false };
 
   api.run = run_stack;
@@ -22,7 +22,7 @@ module.exports = function create_instance(){
         middleware_args = [ main_input ].concat( supplementary_inputs ),
         stack_output = main_input;
 
-    running += 1;
+    running.push( hook_name );
 
     each( hook_middlewares, function( middleware ){
       var result = middleware.apply( null, middleware_args );
@@ -41,13 +41,13 @@ module.exports = function create_instance(){
       end.run = false;
     }
 
-    running -= 1;
+    running.pop();
 
     return stack_output;
   }
 
   function end_stack_run( final_value ){
-    if( running === 0 ) return;
+    if( running.length === 0 ) return;
 
     end.run = true;
     if( Object.prototype.toString.call( final_value ) != '[object Undefined]' ) end.val = final_value;
