@@ -287,7 +287,28 @@ describe( 'Hook Stack Run Behavior', function(){
   });
 });
 
-describe( 'Hook Stack End Behavior', function(){
+describe( 'Hook Stack Premature End Behavior', function(){
+
+  it( 'returns the end value specified', function(){
+    var hook = hooks(),
+        end_value = 5;
+
+    hook.add( 'test', 'hello', function(){
+      return 'hello';
+    });
+
+    hook.add( 'test', 'prematurely-end-stack', function(){
+      hook.end( end_value );
+    });
+
+    hook.add( 'test', 'world', function(){
+      return 'world';
+    });
+
+    var return_value = hook.run( 'test' );
+
+    assert.equal( return_value, end_value, 'returned value ('+ return_value +') is not what was expected ('+ end_value +')' );
+  });
 
   it( 'returns the output of the last executed middleware if no end value is specified', function(){
     var hook = hooks(),
