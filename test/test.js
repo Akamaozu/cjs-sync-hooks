@@ -20,7 +20,7 @@ describe( 'Hook Instance Properties', function(){
   describe( 'has all expected properties', function(){
     expected_props.forEach( function( prop ){
 
-      it( ' has expected "' + prop.name + '" ' + prop.type, function(){
+      it( 'has expected "' + prop.name + '" ' + prop.type, function(){
         assert.equal( hook.hasOwnProperty( prop.name ), true, 'hook instance is missing "' + prop.name + '" property' );
 
         switch( prop.type ){
@@ -32,7 +32,7 @@ describe( 'Hook Instance Properties', function(){
             throw new Error( 'no test defined for "' + prop.type + '" properties' );
           break;
         }
-      });      
+      });
     });
   });
 
@@ -54,7 +54,7 @@ describe( 'Hook Instance Properties', function(){
     }
   });
 
-  describe( 'hook.del', function(){    
+  describe( 'hook.del', function(){
     it( 'is an alias for hook.delete', function(){
       assert.equal( hook.del === hook.delete, true, 'hook.del is not strictly equal to hook.delete' );
     });
