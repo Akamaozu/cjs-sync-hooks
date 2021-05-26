@@ -10,6 +10,7 @@ module.exports = function create_instance(){
   api.end = end_stack_run;
   api.add = add_middleware;
   api.del = api.delete = delete_middleware;
+  api.list = list_middlewares;
 
   return api;
 
@@ -69,5 +70,36 @@ module.exports = function create_instance(){
     if( map[ hook ][ name ] ) throw new Error( 'hook "' + hook + '" already has middleware called "' + name + '"' );
 
     map[ hook ][ name ] = middleware;
+  }
+
+  function list_middlewares( hook_name ){
+    var hook_name_type = Object.prototype.toString.call( hook_name ),
+        result;
+
+    switch( hook_name_type ){
+
+      case '[object String]':
+        if( ! map.hasOwnProperty( hook_name ) ) result = [];
+        else result = Object.keys( map[ hook_name ] );
+      break;
+
+      case '[object Undefined]':
+        result = {};
+
+        var all_hook_names = Object.keys( map );
+
+        all_hook_names.forEach( function( hook_name ){
+          var hook_middlewares = map[ hook_name ],
+              hook_middleware_names = Object.keys( hook_middlewares );
+
+          result[ hook_name ] = hook_middleware_names;
+        });
+      break;
+
+      default:
+        throw new Error( 'expected argument to be string, but it is not' );
+    }
+
+    return result;
   }
 }
