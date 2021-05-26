@@ -45,9 +45,12 @@ describe( 'Hook Instance Properties', function(){
 
     for( var prop_name in hook ){
       if( !hook.hasOwnProperty( prop_name ) ) continue;
-      it( 'property "' + prop_name + '" is expected', function(){
-        assert.equal( expected_prop_names.indexOf( prop_name ) > -1, true, 'hook instance has unexpected property "' + prop_name + '"' );
-      });
+
+      (function( current_prop_name ){
+        it( 'property "' + current_prop_name + '" is expected', function(){
+          assert.equal( expected_prop_names.indexOf( current_prop_name ) > -1, true, 'hook instance has unexpected property "' + current_prop_name + '"' );
+        });
+      })( prop_name );
     }
   });
 
