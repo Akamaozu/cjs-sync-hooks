@@ -14,7 +14,8 @@ describe( 'Hook Instance Properties', function(){
         { name: 'del', type: 'function' },
         { name: 'run', type: 'function' },
         { name: 'end', type: 'function' },
-        { name: 'delete', type: 'function' }
+        { name: 'delete', type: 'function' },
+        { name: 'list', type: 'function' }
       ];
 
   describe( 'has all expected properties', function(){
@@ -252,6 +253,99 @@ describe( 'Hook Instance Function Behavior', function(){
       }
 
       assert.equal( error_thrown, true, 'expected error to br thrown, but none was' );
+    });
+  });
+
+  describe( 'hook.list', function(){
+    it( 'will return all middlewares on all hooks, if given no arguments', function(){
+      var hook = hooks(),
+          hook_ids = [],
+          middleware_ids = [],
+          instances_to_generate = 44,
+          generated = 0;
+
+      while( generated < instances_to_generate ){
+        var index = generated;
+
+        hook_ids[ index ] = Math.floor( Math.random() * instances_to_generate ) + 1;
+        middleware_ids[ index ] = Math.floor( Math.random() * instances_to_generate ) + 1;
+
+        try {
+          hook.add( 'test-'+ hook_ids[ index ], 'middleware-'+ middleware_ids[ index ], hook_middleware );
+          generated += 1;
+        }
+        catch( error ){
+          // do nothing
+        }
+      }
+
+      var hook_list = hook.list();
+
+      hook_ids.forEach( function( hook_id, index ){
+        var hook_name = 'test-'+ hook_id;
+        assert.equal( hook_list.hasOwnProperty( hook_name ), true, 'expected hook "'+ hook_name +'" to be listed' );
+
+        var middleware_name = 'middleware-' + middleware_ids[ index ];
+        assert.equal( hook_list[ hook_name ].indexOf( middleware_name ) > -1, true, 'expected middleware "'+ middleware_name +'" to be registered to hook "'+ hook_name +'"' );
+      });
+
+      function hook_middleware( main_input ){
+        console.log( 'main input:', main_input );
+      }
+    });
+
+    it( 'will return middleware for hook specified (first argument)', function(){
+      var hook = hooks(),
+          hook_ids = [],
+          middleware_ids = [],
+          instances_to_generate = 44,
+          generated = 0;
+
+      while( generated < instances_to_generate ){
+        var index = generated;
+
+        hook_ids[ index ] = Math.floor( Math.random() * instances_to_generate ) + 1;
+        middleware_ids[ index ] = Math.floor( Math.random() * instances_to_generate ) + 1;
+
+        try {
+          hook.add( 'test-'+ hook_ids[ index ], 'middleware-'+ middleware_ids[ index ], hook_middleware );
+          generated += 1;
+        }
+        catch( error ){
+          // do nothing
+        }
+      }
+
+      var instance_to_check = Math.floor( Math.random() * instances_to_generate ),
+          hook_to_check = 'test-' + hook_ids[ instance_to_check ],
+          middleware_to_check = 'middleware-' + middleware_ids[ instance_to_check ],
+          hook_list = hook.list( hook_to_check  );
+
+      assert.equal( hook_list.indexOf( middleware_to_check ) > -1, true, 'expected hook "'+ hook_to_check + '" to have middleware "'+ middleware_to_check +'"' );
+
+      function hook_middleware( main_input ){
+        console.log( 'main input:', main_input );
+      }
+    });
+
+    it( 'will throw an error if first argument given is not a string', function(){
+      var hook = hooks(),
+          didnt_throw_error = [];
+
+      datatypes.forEach( function( type ){
+        if( type.name == 'undefined' ) return;
+
+        try {
+          hook.list( type.example );
+          didnt_throw_error.push( type.name );
+        }
+
+        catch( error ){
+        }
+      });
+
+      assert.equal( didnt_throw_error.length === 1, true, 'expected only one argument type to not throw an error' );
+      assert.equal( didnt_throw_error.indexOf( 'string' ) > -1, true, 'expected successfully-executed argument type to be "string"' );
     });
   });
 });
